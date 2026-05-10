@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#7C4F2F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Clay Recipes">
+  <title>Clay Recipes</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tierra: #7C4F2F;
+      --arcilla: #B8714A;
+      --crema: #F5ECD7;
+      --hueso: #EDE0C8;
+      --carbon: #2C2420;
+      --gris: #6B5C52;
+      --verde: #4A7048;
+      --rojo: #8B3020;
+      --azul: #2E4A6A;
+      --dorado: #C9A96E;
+      --safe-top: env(safe-area-inset-top, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--crema);
+      color: var(--carbon);
+      min-height: 100vh;
+      overscroll-behavior: none;
+    }
+
+    /* ── LOADING ── */
+    #loading-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--tierra);
+      color: var(--crema);
+      gap: 18px;
+    }
+    .loading-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; }
+    .spinner { width: 32px; height: 32px; border: 3px solid rgba(245,236,215,0.3); border-top-color: var(--crema); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── AUTH ── */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      background: var(--tierra);
+    }
+    .auth-logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--crema); text-align: center; margin-bottom: 6px; }
+    .auth-sub { color: rgba(245,236,215,0.6); font-size: 13px; text-align: center; margin-bottom: 36px; font-weight: 300; }
+    .auth-card { background: var(--crema); border-radius: 16px; padding: 28px 22px; width: 100%; max-width: 360px; }
+    .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--hueso); }
+    .auth-tab { flex: 1; padding: 8px; background: none; border: none; font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; color: var(--gris); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+    .auth-tab.active { color: var(--tierra); border-bottom-color: var(--tierra); }
+    .auth-msg { margin-top: 12px; padding: 10px 12px; border-radius: 7px; font-size: 13px; display: none; }
+    .auth-msg.error { background: #fce8e6; color: var(--rojo); }
+    .auth-msg.success { background: #e6f4ea; color: var(--verde); }
+    .forgot-link { display: block; text-align: right; margin-top: 6px; font-size: 12px; color: var(--arcilla); cursor: pointer; background: none; border: none; font-family: inherit; width: 100%; }
+
+    /* ── SHARED INPUTS ── */
+    .field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris); margin-bottom: 5px; margin-top: 14px; display: block; }
+    input, select, textarea { width: 100%; padding: 11px 13px; border: 1.5px solid var(--hueso); border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 15px; background: white; color: var(--carbon); outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--arcilla); }
+    textarea { resize: vertical; min-height: 72px; }
+    .btn-primary { width: 100%; padding: 14px; background: var(--tierra); color: white; border: none; border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px; letter-spacing: 0.03em; transition: background 0.2s; }
+    .btn-primary:hover { background: var(--arcilla); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ── APP HEADER ── */
+    #app-screen { display: none; }
+    header { background: var(--tierra); color: var(--crema); padding: calc(var(--safe-top) + 14px) 16px 13px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(44,36,32,0.3); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; }
+    .header-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #4CAF50; transition: background 0.3s; flex-shrink: 0; }
+    .sync-dot.syncing { background: var(--dorado); animation: pulse 1s infinite; }
+    .sync-dot.error { background: var(--rojo); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .btn-logout { background: rgba(245,236,215,0.15); border: none; color: var(--crema); border-radius: 6px; padding: 5px 10px; font-size: 11px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; font-weight: 600; }
+
+    /* ── NAV ── */
+    nav { display: flex; background: var(--carbon); }
+    nav button { flex: 1; padding: 11px 4px; background: none; border: none; border-bottom: 2px solid transparent; color: rgba(245,236,215,0.5); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; cursor: pointer; transition: all 0.2s; }
+    nav button.active { color: var(--arcilla); border-bottom-color: var(--arcilla); }
+
+    /* ── SECTIONS ── */
+    .section { display: none; padding: 14px; padding-bottom: 90px; }
+    .section.active { display: block; }
+
+    /* ── FILTER ── */
+    .filter-row { display: flex; gap: 7px; margin-bottom: 13px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .filter-btn { padding: 5px 14px; border-radius: 16px; border: 1.5px solid var(--hueso); background: white; color: var(--gris); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+    .filter-btn.active { background: var(--tierra); color: white; border-color: var(--tierra); }
+
+    /* ── CARDS ── */
+    .card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 5px rgba(44,36,32,0.09); cursor: pointer; transition: transform 0.15s; }
+    .card:active { transform: scale(0.99); }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--tierra); font-weight: 700; }
+    .tag { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; flex-shrink: 0; }
+    .tag-engobe { background: #E8D5C4; color: var(--tierra); }
+    .tag-esmalte { background: #C4D5E8; color: var(--azul); }
+    .tag-coccion { background: #C4E8C4; color: var(--verde); }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .card-meta span { font-size: 11px; color: var(--gris); }
+    .card-detail { display: none; border-top: 1px solid var(--hueso); margin-top: 11px; padding-top: 11px; }
+    .card-detail.open { display: block; }
+    .detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris); margin-bottom: 7px; margin-top: 13px; }
+    .detail-label:first-child { margin-top: 0; }
+    .ing-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--hueso); font-size: 13px; }
+    .ing-row:last-child { border-bottom: none; }
+    .ing-pct { font-weight: 700; color: var(--arcilla); }
+    .curva-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .curva-step { background: var(--hueso); border-radius: 8px; padding: 7px 11px; text-align: center; min-width: 74px; flex-shrink: 0; }
+    .curva-temp { font-weight: 700; color: var(--tierra); font-size: 12px; }
+    .curva-rate { font-size: 11px; color: var(--gris); margin-top: 1px; }
+    .notes-text { font-size: 13px; color: var(--gris); font-style: italic; line-height: 1.5; }
+    .stars { color: var(--arcilla); font-size: 15px; letter-spacing: 2px; }
+    .btn-danger { background: none; border: 1px solid var(--rojo); color: var(--rojo); border-radius: 7px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; margin-top: 10px; }
+    .btn-edit { background: none; border: 1px solid var(--arcilla); color: var(--arcilla); border-radius: 7px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; margin-top: 10px; margin-right: 8px; }
+
+    /* ── EMPTY ── */
+    .empty { text-align: center; padding: 52px 16px; color: var(--gris); }
+    .empty-icon { font-size: 42px; opacity: 0.45; margin-bottom: 12px; }
+    .empty p { font-size: 14px; line-height: 1.6; }
+
+    /* ── FAB ── */
+    .fab { position: fixed; bottom: 22px; right: 18px; width: 54px; height: 54px; border-radius: 50%; background: var(--tierra); color: white; border: none; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(44,36,32,0.45); display: flex; align-items: center; justify-content: center; z-index: 200; transition: transform 0.2s, background 0.2s; }
+    .fab:active { transform: scale(0.93); background: var(--arcilla); }
+
+    /* ── MODAL ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(44,36,32,0.62); z-index: 300; align-items: flex-end; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--crema); border-radius: 18px 18px 0 0; padding: 14px 16px 40px; width: 100%; max-height: 92vh; overflow-y: auto; animation: slideUp 0.28s cubic-bezier(0.32,0.72,0,1); }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-handle { width: 38px; height: 4px; background: var(--gris); border-radius: 2px; margin: 0 auto 14px; opacity: 0.35; }
+    .modal-title { font-family: 'Playfair Display', serif; color: var(--tierra); font-size: 1.2rem; margin-bottom: 16px; }
+    .type-selector { display: flex; gap: 8px; margin-top: 5px; }
+    .type-btn { flex: 1; padding: 10px 4px; border: 1.5px solid var(--hueso); border-radius: 8px; background: white; color: var(--gris); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .type-btn.sel-engobe { border-color: var(--tierra); background: #E8D5C4; color: var(--tierra); }
+    .type-btn.sel-esmalte { border-color: var(--azul); background: #C4D5E8; color: var(--azul); }
+    .type-btn.sel-coccion { border-color: var(--verde); background: #C4E8C4; color: var(--verde); }
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+    .ing-builder { background: white; border-radius: 9px; padding: 11px; margin-top: 5px; }
+    .ing-builder-row { display: flex; gap: 7px; margin-bottom: 7px; align-items: center; }
+    .ing-builder-row input { margin: 0; }
+    .ing-builder-row input:first-child { flex: 2; padding: 9px 10px; }
+    .ing-builder-row input:nth-child(2) { flex: 1; padding: 9px 8px; text-align: center; }
+    .btn-remove-ing { background: none; border: none; color: var(--rojo); font-size: 20px; cursor: pointer; padding: 0 3px; line-height: 1; flex-shrink: 0; }
+    .btn-add-ing { width: 100%; padding: 9px; background: none; border: 1.5px dashed var(--arcilla); border-radius: 7px; color: var(--arcilla); font-family: 'Source Sans 3', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 5px; }
+    .curva-builder { background: white; border-radius: 9px; padding: 11px; margin-top: 5px; }
+    .curva-header { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+    .curva-header span { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--gris); text-align: center; letter-spacing: 0.05em; }
+    .curva-builder-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+    .curva-builder-row input { margin: 0; padding: 9px 6px; text-align: center; font-size: 13px; }
+    .btn-cancel { width: 100%; padding: 10px; background: none; border: none; color: var(--gris); font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; margin-top: 7px; }
+
+    /* ── RESULTADOS ── */
+    .rank-card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 5px rgba(44,36,32,0.09); display: flex; justify-content: space-between; align-items: center; }
+    .rank-num { font-size: 10px; color: var(--gris); margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading-screen">
+  <div class="loading-title">📓 Clay Recipes</div>
+  <div class="spinner"></div>
+</div>
+
+<!-- Auth -->
+<div id="auth-screen" style="display:none">
+  <div class="auth-logo">📓 Clay Recipes</div>
+  <div class="auth-sub">Registra tus fórmulas y cocciones</div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login', this)">Iniciar sesión</button>
+      <button class="auth-tab" onclick="switchAuthTab('register', this)">Registrarse</button>
+    </div>
+
+    <div id="login-form">
+      <label class="field-label">Email</label>
+      <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="email">
+      <label class="field-label">Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+      <button class="btn-primary" id="btn-login" onclick="doLogin()">Entrar</button>
+      <button class="forgot-link" onclick="doResetPassword()">¿Olvidaste la contraseña?</button>
+    </div>
+
+    <div id="register-form" style="display:none">
+      <label class="field-label">Email</label>
+      <input type="email" id="reg-email" placeholder="tu@email.com" autocomplete="email">
+      <label class="field-label">Contraseña</label>
+      <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+      <button class="btn-primary" id="btn-register" onclick="doRegister()">Crear cuenta</button>
+    </div>
+
+    <div id="auth-msg" class="auth-msg"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app-screen" style="display:none">
+  <header>
+    <div class="header-inner">
+      <div class="header-title">📓 Clay Recipes</div>
+      <div class="header-right">
+        <div class="sync-dot" id="sync-dot"></div>
+        <button class="btn-logout" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <button class="active" onclick="showTab('formulas', this)">Fórmulas</button>
+    <button onclick="showTab('cocciones', this)">Cocciones</button>
+    <button onclick="showTab('resultados', this)">Resultados</button>
+  </nav>
+
+  <div id="tab-formulas" class="section active">
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterFormulas('all', this)">Todas</button>
+      <button class="filter-btn" onclick="filterFormulas('engobe', this)">Engobes</button>
+      <button class="filter-btn" onclick="filterFormulas('esmalte', this)">Esmaltes</button>
+    </div>
+    <div id="formulas-list"></div>
+  </div>
+
+  <div id="tab-cocciones" class="section">
+    <div id="cocciones-list"></div>
+  </div>
+
+  <div id="tab-resultados" class="section">
+    <div id="resultados-list"></div>
+  </div>
+
+  <button class="fab" onclick="openModal()">+</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" onclick="handleModalClick(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-title">Nueva entrada</div>
+
+    <label class="field-label">Tipo de entrada</label>
+    <div class="type-selector">
+      <button class="type-btn" id="tbtn-engobe" onclick="selectType('engobe')">🎨 Engobe</button>
+      <button class="type-btn" id="tbtn-esmalte" onclick="selectType('esmalte')">✨ Esmalte</button>
+      <button class="type-btn" id="tbtn-coccion" onclick="selectType('coccion')">🔥 Cocción</button>
+    </div>
+
+    <!-- Mezcla form -->
+    <div id="form-mezcla" class="form-section">
+      <label class="field-label">Nombre / referencia</label>
+      <input type="text" id="f-nombre" placeholder="Ej: Engobe azul cobalto #1">
+      <label class="field-label">Color resultante</label>
+      <input type="text" id="f-color" placeholder="Ej: Azul medio, mate">
+      <label class="field-label">Temperatura de uso (°C)</label>
+      <input type="number" id="f-temp" placeholder="1020">
+      <label class="field-label">Ingredientes</label>
+      <div class="ing-builder">
+        <div style="display:flex;gap:7px;margin-bottom:5px">
+          <span style="flex:2;font-size:9px;font-weight:700;color:var(--gris);text-transform:uppercase">Material</span>
+          <span style="flex:1;font-size:9px;font-weight:700;color:var(--gris);text-transform:uppercase;text-align:center">%</span>
+          <span style="width:26px"></span>
+        </div>
+        <div id="ing-container"></div>
+        <button class="btn-add-ing" onclick="addIngredient()">+ Añadir ingrediente</button>
+      </div>
+      <label class="field-label">Método de aplicación</label>
+      <select id="f-metodo">
+        <option value="">Seleccionar...</option>
+        <option>Inmersión</option><option>Pincel</option>
+        <option>Pistola</option><option>Vertido</option>
+      </select>
+      <label class="field-label">Notas</label>
+      <textarea id="f-notas" placeholder="Observaciones, problemas encontrados, consejos..."></textarea>
+    </div>
+
+    <!-- Cocción form -->
+    <div id="form-coccion" class="form-section">
+      <label class="field-label">Nombre / referencia</label>
+      <input type="text" id="c-nombre" placeholder="Ej: Bizcochado estándar">
+      <label class="field-label">Tipo de cocción</label>
+      <select id="c-tipo">
+        <option value="">Seleccionar...</option>
+        <option>Bizcochado</option><option>Esmaltado</option>
+        <option>Monococción</option><option>Tercer fuego</option>
+      </select>
+      <label class="field-label">Temperatura máxima (°C)</label>
+      <input type="number" id="c-tempmax" placeholder="1020">
+      <label class="field-label">Tiempo de mantenimiento (min)</label>
+      <input type="number" id="c-mant" placeholder="15">
+      <label class="field-label">Curva de temperatura</label>
+      <div class="curva-builder">
+        <div class="curva-header">
+          <span>Desde °C</span><span>Hasta °C</span><span>°C / hora</span>
+        </div>
+        <div id="curva-container"></div>
+        <button class="btn-add-ing" style="border-color:var(--verde);color:var(--verde)" onclick="addCurvaStep()">+ Añadir tramo</button>
+      </div>
+      <label class="field-label">Tipo de horno</label>
+      <select id="c-horno">
+        <option value="">Seleccionar...</option>
+        <option>Eléctrico</option><option>Gas</option>
+        <option>Leña</option><option>Raku</option>
+      </select>
+      <label class="field-label">Notas</label>
+      <textarea id="c-notas" placeholder="Observaciones sobre la cocción..."></textarea>
+    </div>
+
+    <button class="btn-primary" onclick="saveEntry()" id="btn-save" style="display:none">Guardar</button>
+    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module" src="app.js"></script>
+</body>
+</html>
