@@ -49,6 +49,7 @@
       gap: 18px;
     }
     .loading-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; }
+    .app-icon { height: 1.1em; width: 1.1em; object-fit: contain; vertical-align: middle; margin-right: 6px; border-radius: 4px; position: relative; top: -2px; }
     .spinner { width: 32px; height: 32px; border: 3px solid rgba(245,236,215,0.3); border-top-color: var(--crema); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -182,13 +183,13 @@
 
 <!-- Loading -->
 <div id="loading-screen">
-  <div class="loading-title">📓 Clay Recipes</div>
+  <div class="loading-title"><img src="icon-512.png" class="app-icon"> Clay Recipes</div>
   <div class="spinner"></div>
 </div>
 
 <!-- Auth -->
 <div id="auth-screen" style="display:none">
-  <div class="auth-logo">📓 Clay Recipes</div>
+  <div class="auth-logo"><img src="icon-512.png" class="app-icon" style="height:1.3em;width:1.3em"> Clay Recipes</div>
   <div class="auth-sub">Registra tus fórmulas y cocciones</div>
   <div class="auth-card">
     <div class="auth-tabs">
@@ -221,7 +222,7 @@
 <div id="app-screen" style="display:none">
   <header>
     <div class="header-inner">
-      <div class="header-title">📓 Clay Recipes</div>
+      <div class="header-title"><img src="icon-512.png" class="app-icon"> Clay Recipes</div>
       <div class="header-right">
         <div class="sync-dot" id="sync-dot"></div>
         <button class="btn-logout" onclick="doLogout()">Salir</button>
