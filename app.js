@@ -7,6 +7,7 @@ import {
   signOut,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  sendEmailVerification,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore,
@@ -44,7 +45,7 @@ let editingId = null; // null = nueva entrada, string = edición
 
 // ── Auth state listener ──────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
-  if (user) {
+  if (user && user.emailVerified) {
     currentUser = user;
     await loadData();
     showApp();
@@ -100,7 +101,12 @@ window.doLogin = async () => {
   if (!email || !pass) return showMsg("Introduce email y contraseña");
   setAuthLoading("btn-login", true, "Entrar");
   try {
-    await signInWithEmailAndPassword(auth, email, pass);
+    const result = await signInWithEmailAndPassword(auth, email, pass);
+    if (!result.user.emailVerified) {
+      await signOut(auth);
+      showMsg("Debes verificar tu email antes de entrar. Revisa tu bandeja de entrada.");
+      setAuthLoading("btn-login", false, "Entrar");
+    }
   } catch (e) {
     showMsg(tradAuthError(e.code));
     setAuthLoading("btn-login", false, "Entrar");
@@ -114,7 +120,11 @@ window.doRegister = async () => {
   if (pass.length < 6) return showMsg("La contraseña debe tener al menos 6 caracteres");
   setAuthLoading("btn-register", true, "Crear cuenta");
   try {
-    await createUserWithEmailAndPassword(auth, email, pass);
+    const result = await createUserWithEmailAndPassword(auth, email, pass);
+    await sendEmailVerification(result.user);
+    await signOut(auth);
+    showMsg("Cuenta creada. Revisa tu email y confirma tu dirección antes de iniciar sesión.", "success");
+    setAuthLoading("btn-register", false, "Crear cuenta");
   } catch (e) {
     showMsg(tradAuthError(e.code));
     setAuthLoading("btn-register", false, "Crear cuenta");
