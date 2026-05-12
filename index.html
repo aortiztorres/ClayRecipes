@@ -13,59 +13,38 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
+    /* ── DESIGN TOKENS ── */
     :root {
-      --tierra: #7C4F2F;
-      --arcilla: #B8714A;
-      --crema: #F5ECD7;
-      --hueso: #EDE0C8;
-      --carbon: #2C2420;
-      --gris: #6B5C52;
-      --verde: #4A7048;
-      --rojo: #8B3020;
-      --azul: #2E4A6A;
-      --dorado: #C9A96E;
-      --safe-top: env(safe-area-inset-top, 0px);
+      --tierra: #7C4F2F; --arcilla: #B8714A; --crema: #F5ECD7;
+      --hueso: #EDE0C8; --carbon: #2C2420; --gris: #6B5C52;
+      --verde: #4A7048; --rojo: #8B3020; --azul: #2E4A6A;
+      --dorado: #C9A96E; --safe-top: env(safe-area-inset-top, 0px);
+      --bg: #F5ECD7; --surface: #fff; --text: #2C2420; --subtext: #6B5C52;
+      --border: #EDE0C8; --header-bg: #7C4F2F; --nav-bg: #2C2420;
+      --font-scale: 1; --card-pad: 14px;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1210; --surface: #2a1f1a; --text: #F5ECD7; --subtext: #C4A882;
+      --border: #3d2e26; --header-bg: #3d2218; --nav-bg: #0d0a09;
+      --crema: #F5ECD7; --hueso: #3d2e26;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-    body {
-      font-family: 'Source Sans 3', sans-serif;
-      background: var(--crema);
-      color: var(--carbon);
-      min-height: 100vh;
-      overscroll-behavior: none;
-    }
+    html { font-size: calc(15px * var(--font-scale)); }
+    body { font-family: 'Source Sans 3', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overscroll-behavior: none; transition: background 0.3s, color 0.3s; }
 
     /* ── LOADING ── */
-    #loading-screen {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: var(--tierra);
-      color: var(--crema);
-      gap: 18px;
-    }
+    #loading-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--tierra); color: var(--crema); gap: 18px; }
     .loading-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; }
     .app-icon { height: 1.1em; width: 1.1em; object-fit: contain; vertical-align: middle; margin-right: 6px; border-radius: 4px; position: relative; top: -2px; }
     .spinner { width: 32px; height: 32px; border: 3px solid rgba(245,236,215,0.3); border-top-color: var(--crema); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── AUTH ── */
-    #auth-screen {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 24px;
-      background: var(--tierra);
-    }
-    .auth-logo { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--crema); text-align: center; margin-bottom: 6px; }
-    .auth-sub { color: rgba(245,236,215,0.6); font-size: 13px; text-align: center; margin-bottom: 36px; font-weight: 300; }
-    .auth-card { background: var(--crema); border-radius: 16px; padding: 28px 22px; width: 100%; max-width: 360px; }
+    #auth-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; background: var(--tierra); }
+    .auth-logo { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 5vw, 2rem); color: var(--crema); text-align: center; margin-bottom: 6px; }
+    .auth-sub { color: rgba(245,236,215,0.6); font-size: 13px; text-align: center; margin-bottom: 16px; font-weight: 300; }
+    .auth-card { background: var(--crema); border-radius: 16px; padding: clamp(20px, 4vw, 28px) clamp(16px, 4vw, 22px); width: 100%; max-width: 400px; }
     .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--hueso); }
     .auth-tab { flex: 1; padding: 8px; background: none; border: none; font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; color: var(--gris); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
     .auth-tab.active { color: var(--tierra); border-bottom-color: var(--tierra); }
@@ -73,72 +52,116 @@
     .auth-msg.error { background: #fce8e6; color: var(--rojo); }
     .auth-msg.success { background: #e6f4ea; color: var(--verde); }
     .forgot-link { display: block; text-align: right; margin-top: 6px; font-size: 12px; color: var(--arcilla); cursor: pointer; background: none; border: none; font-family: inherit; width: 100%; }
+    .lang-selector-auth { display: flex; justify-content: center; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+    .lang-btn-auth { padding: 4px 10px; border-radius: 14px; border: 1.5px solid rgba(245,236,215,0.35); background: rgba(245,236,215,0.1); color: rgba(245,236,215,0.75); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .lang-btn-auth.active { background: rgba(245,236,215,0.25); border-color: var(--crema); color: var(--crema); }
 
-    /* ── SHARED INPUTS ── */
-    .field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris); margin-bottom: 5px; margin-top: 14px; display: block; }
-    input, select, textarea { width: 100%; padding: 11px 13px; border: 1.5px solid var(--hueso); border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 15px; background: white; color: var(--carbon); outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
+    /* ── INPUTS ── */
+    .field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--subtext); margin-bottom: 5px; margin-top: 14px; display: block; }
+    input, select, textarea { width: 100%; padding: clamp(9px,2vw,11px) clamp(10px,2vw,13px); border: 1.5px solid var(--border); border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 1rem; background: var(--surface); color: var(--text); outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
     input:focus, select:focus, textarea:focus { border-color: var(--arcilla); }
     textarea { resize: vertical; min-height: 72px; }
-    .btn-primary { width: 100%; padding: 14px; background: var(--tierra); color: white; border: none; border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 20px; letter-spacing: 0.03em; transition: background 0.2s; }
+    .btn-primary { width: 100%; padding: clamp(11px,3vw,14px); background: var(--tierra); color: white; border: none; border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 20px; letter-spacing: 0.03em; transition: background 0.2s; }
     .btn-primary:hover { background: var(--arcilla); }
     .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* ── APP HEADER ── */
+    /* ── HEADER ── */
     #app-screen { display: none; }
-    header { background: var(--tierra); color: var(--crema); padding: calc(var(--safe-top) + 14px) 16px 13px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(44,36,32,0.3); }
-    .header-inner { display: flex; align-items: center; justify-content: space-between; }
-    .header-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; }
-    .header-right { display: flex; align-items: center; gap: 10px; }
+    header { background: var(--header-bg); color: var(--crema); padding: calc(var(--safe-top) + 12px) 16px 11px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(44,36,32,0.3); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .header-title { font-family: 'Playfair Display', serif; font-size: clamp(1rem, 4vw, 1.3rem); white-space: nowrap; }
+    .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #4CAF50; transition: background 0.3s; flex-shrink: 0; }
     .sync-dot.syncing { background: var(--dorado); animation: pulse 1s infinite; }
     .sync-dot.error { background: var(--rojo); }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .btn-logout { background: rgba(245,236,215,0.15); border: none; color: var(--crema); border-radius: 6px; padding: 5px 10px; font-size: 11px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; font-weight: 600; }
+    .btn-icon { background: rgba(245,236,215,0.15); border: none; color: var(--crema); border-radius: 6px; padding: 5px 8px; font-size: 11px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; font-weight: 600; }
+    .lang-select { background: rgba(245,236,215,0.15); border: none; color: var(--crema); border-radius: 6px; padding: 5px 4px; font-size: 12px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; -webkit-appearance: none; appearance: none; }
+    .lang-select option { background: #2C2420; color: var(--crema); }
+
+    /* ── SEARCH BAR ── */
+    .search-bar { padding: 10px 14px 0; }
+    .search-input { width: 100%; padding: 9px 14px 9px 36px; border: 1.5px solid var(--border); border-radius: 20px; font-size: 0.9rem; background: var(--surface); color: var(--text); font-family: 'Source Sans 3', sans-serif; outline: none; }
+    .search-wrap { position: relative; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--subtext); font-size: 14px; pointer-events: none; }
 
     /* ── NAV ── */
-    nav { display: flex; background: var(--carbon); }
-    nav button { flex: 1; padding: 11px 4px; background: none; border: none; border-bottom: 2px solid transparent; color: rgba(245,236,215,0.5); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; cursor: pointer; transition: all 0.2s; }
+    nav { display: flex; background: var(--nav-bg); overflow-x: auto; scrollbar-width: none; }
+    nav::-webkit-scrollbar { display: none; }
+    nav button { flex: 1; min-width: 60px; padding: 10px 4px; background: none; border: none; border-bottom: 2px solid transparent; color: rgba(245,236,215,0.5); font-family: 'Source Sans 3', sans-serif; font-size: clamp(9px,2.5vw,11px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     nav button.active { color: var(--arcilla); border-bottom-color: var(--arcilla); }
 
     /* ── SECTIONS ── */
-    .section { display: none; padding: 14px; padding-bottom: 90px; }
+    .section { display: none; padding: var(--card-pad); padding-bottom: 90px; }
     .section.active { display: block; }
 
     /* ── FILTER ── */
-    .filter-row { display: flex; gap: 7px; margin-bottom: 13px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .filter-row { display: flex; gap: 7px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
     .filter-row::-webkit-scrollbar { display: none; }
-    .filter-btn { padding: 5px 14px; border-radius: 16px; border: 1.5px solid var(--hueso); background: white; color: var(--gris); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+    .filter-btn { padding: 5px 14px; border-radius: 16px; border: 1.5px solid var(--border); background: var(--surface); color: var(--subtext); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
     .filter-btn.active { background: var(--tierra); color: white; border-color: var(--tierra); }
 
+    /* ── TAGS ── */
+    .tags-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .tag-chip { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 10px; background: var(--hueso); color: var(--subtext); font-size: 10px; font-weight: 600; }
+    .tag-chip-remove { background: none; border: none; cursor: pointer; color: var(--subtext); font-size: 12px; padding: 0; line-height: 1; }
+    .tags-filter { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 10px; padding-bottom: 4px; scrollbar-width: none; }
+    .tags-filter::-webkit-scrollbar { display: none; }
+    .tag-filter-btn { padding: 3px 10px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); color: var(--subtext); font-size: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .tag-filter-btn.active { background: var(--arcilla); color: white; border-color: var(--arcilla); }
+
     /* ── CARDS ── */
-    .card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 5px rgba(44,36,32,0.09); cursor: pointer; transition: transform 0.15s; }
+    .card { background: var(--surface); border-radius: 10px; padding: var(--card-pad); margin-bottom: 10px; box-shadow: 0 1px 5px rgba(44,36,32,0.09); cursor: pointer; transition: transform 0.15s; }
     .card:active { transform: scale(0.99); }
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-    .card-title { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--tierra); font-weight: 700; }
+    .card-title { font-family: 'Playfair Display', serif; font-size: clamp(13px,3.5vw,15px); color: var(--tierra); font-weight: 700; }
     .tag { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; flex-shrink: 0; }
     .tag-engobe { background: #E8D5C4; color: var(--tierra); }
     .tag-esmalte { background: #C4D5E8; color: var(--azul); }
     .tag-coccion { background: #C4E8C4; color: var(--verde); }
     .card-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-    .card-meta span { font-size: 11px; color: var(--gris); }
-    .card-detail { display: none; border-top: 1px solid var(--hueso); margin-top: 11px; padding-top: 11px; }
+    .card-meta span { font-size: 11px; color: var(--subtext); }
+    .card-detail { display: none; border-top: 1px solid var(--border); margin-top: 11px; padding-top: 11px; }
     .card-detail.open { display: block; }
-    .detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gris); margin-bottom: 7px; margin-top: 13px; }
+    .detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--subtext); margin-bottom: 7px; margin-top: 13px; }
     .detail-label:first-child { margin-top: 0; }
-    .ing-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--hueso); font-size: 13px; }
+    .ing-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: clamp(12px,3vw,13px); }
     .ing-row:last-child { border-bottom: none; }
     .ing-pct { font-weight: 700; color: var(--arcilla); }
     .curva-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-    .curva-step { background: var(--hueso); border-radius: 8px; padding: 7px 11px; text-align: center; min-width: 74px; flex-shrink: 0; }
+    .curva-step { background: var(--border); border-radius: 8px; padding: 7px 11px; text-align: center; min-width: 74px; flex-shrink: 0; }
     .curva-temp { font-weight: 700; color: var(--tierra); font-size: 12px; }
-    .curva-rate { font-size: 11px; color: var(--gris); margin-top: 1px; }
-    .notes-text { font-size: 13px; color: var(--gris); font-style: italic; line-height: 1.5; }
+    .curva-rate { font-size: 11px; color: var(--subtext); margin-top: 1px; }
+    .notes-text { font-size: 13px; color: var(--subtext); font-style: italic; line-height: 1.5; }
     .stars { color: var(--arcilla); font-size: 15px; letter-spacing: 2px; }
     .btn-danger { background: none; border: 1px solid var(--rojo); color: var(--rojo); border-radius: 7px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; margin-top: 10px; }
-    .btn-edit { background: none; border: 1px solid var(--arcilla); color: var(--arcilla); border-radius: 7px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; margin-top: 10px; margin-right: 8px; }
+    .btn-secondary { background: none; border: 1px solid var(--arcilla); color: var(--arcilla); border-radius: 7px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; margin-top: 10px; margin-right: 6px; }
+    .card-actions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+
+    /* ── PHOTOS ── */
+    .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 6px; margin-top: 8px; }
+    .photo-thumb { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: var(--border); }
+    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-thumb-del { position: absolute; top: 2px; right: 2px; background: rgba(139,48,32,0.85); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .photo-upload-btn { aspect-ratio: 1; border: 2px dashed var(--arcilla); border-radius: 6px; background: none; color: var(--arcilla); font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(90px,25vw,130px), 1fr)); gap: 8px; }
+    .gallery-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--border); cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-item-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(44,36,32,0.75)); color: white; font-size: 10px; padding: 12px 6px 4px; font-weight: 600; }
+    .photo-lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 500; align-items: center; justify-content: center; }
+    .photo-lightbox.open { display: flex; }
+    .photo-lightbox img { max-width: 95vw; max-height: 90vh; object-fit: contain; border-radius: 8px; }
+    .photo-lightbox-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 36px; height: 36px; font-size: 18px; cursor: pointer; }
+
+    /* ── CALCULATOR ── */
+    .calc-box { background: var(--border); border-radius: 10px; padding: 14px; margin-top: 10px; }
+    .calc-result-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.3); font-size: 13px; }
+    .calc-result-row:last-child { border-bottom: none; }
+    .calc-grams { font-weight: 700; color: var(--tierra); }
 
     /* ── EMPTY ── */
-    .empty { text-align: center; padding: 52px 16px; color: var(--gris); }
+    .empty { text-align: center; padding: 52px 16px; color: var(--subtext); }
     .empty-icon { font-size: 42px; opacity: 0.45; margin-bottom: 12px; }
     .empty p { font-size: 14px; line-height: 1.6; }
 
@@ -149,34 +172,71 @@
     /* ── MODAL ── */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(44,36,32,0.62); z-index: 300; align-items: flex-end; }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--crema); border-radius: 18px 18px 0 0; padding: 14px 16px 40px; width: 100%; max-height: 92vh; overflow-y: auto; animation: slideUp 0.28s cubic-bezier(0.32,0.72,0,1); }
+    .modal { background: var(--bg); border-radius: 18px 18px 0 0; padding: 14px 16px 40px; width: 100%; max-height: 92vh; overflow-y: auto; animation: slideUp 0.28s cubic-bezier(0.32,0.72,0,1); }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .modal-handle { width: 38px; height: 4px; background: var(--gris); border-radius: 2px; margin: 0 auto 14px; opacity: 0.35; }
+    .modal-handle { width: 38px; height: 4px; background: var(--subtext); border-radius: 2px; margin: 0 auto 14px; opacity: 0.35; }
     .modal-title { font-family: 'Playfair Display', serif; color: var(--tierra); font-size: 1.2rem; margin-bottom: 16px; }
     .type-selector { display: flex; gap: 8px; margin-top: 5px; }
-    .type-btn { flex: 1; padding: 10px 4px; border: 1.5px solid var(--hueso); border-radius: 8px; background: white; color: var(--gris); font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .type-btn { flex: 1; padding: 10px 4px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--subtext); font-family: 'Source Sans 3', sans-serif; font-size: clamp(9px,2.5vw,11px); font-weight: 700; cursor: pointer; transition: all 0.2s; text-align: center; }
     .type-btn.sel-engobe { border-color: var(--tierra); background: #E8D5C4; color: var(--tierra); }
     .type-btn.sel-esmalte { border-color: var(--azul); background: #C4D5E8; color: var(--azul); }
     .type-btn.sel-coccion { border-color: var(--verde); background: #C4E8C4; color: var(--verde); }
     .form-section { display: none; }
     .form-section.active { display: block; }
-    .ing-builder { background: white; border-radius: 9px; padding: 11px; margin-top: 5px; }
+    .ing-builder { background: var(--surface); border-radius: 9px; padding: 11px; margin-top: 5px; }
     .ing-builder-row { display: flex; gap: 7px; margin-bottom: 7px; align-items: center; }
     .ing-builder-row input { margin: 0; }
     .ing-builder-row input:first-child { flex: 2; padding: 9px 10px; }
     .ing-builder-row input:nth-child(2) { flex: 1; padding: 9px 8px; text-align: center; }
     .btn-remove-ing { background: none; border: none; color: var(--rojo); font-size: 20px; cursor: pointer; padding: 0 3px; line-height: 1; flex-shrink: 0; }
     .btn-add-ing { width: 100%; padding: 9px; background: none; border: 1.5px dashed var(--arcilla); border-radius: 7px; color: var(--arcilla); font-family: 'Source Sans 3', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 5px; }
-    .curva-builder { background: white; border-radius: 9px; padding: 11px; margin-top: 5px; }
+    .curva-builder { background: var(--surface); border-radius: 9px; padding: 11px; margin-top: 5px; }
     .curva-header { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
-    .curva-header span { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--gris); text-align: center; letter-spacing: 0.05em; }
+    .curva-header span { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--subtext); text-align: center; letter-spacing: 0.05em; }
     .curva-builder-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 6px; }
     .curva-builder-row input { margin: 0; padding: 9px 6px; text-align: center; font-size: 13px; }
-    .btn-cancel { width: 100%; padding: 10px; background: none; border: none; color: var(--gris); font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; margin-top: 7px; }
+    .btn-cancel { width: 100%; padding: 10px; background: none; border: none; color: var(--subtext); font-family: 'Source Sans 3', sans-serif; font-size: 14px; cursor: pointer; margin-top: 7px; }
 
-    /* ── RESULTADOS ── */
-    .rank-card { background: white; border-radius: 10px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 5px rgba(44,36,32,0.09); display: flex; justify-content: space-between; align-items: center; }
-    .rank-num { font-size: 10px; color: var(--gris); margin-bottom: 2px; }
+    /* ── TAG INPUT ── */
+    .tag-input-row { display: flex; gap: 6px; margin-top: 6px; }
+    .tag-input-row input { flex: 1; margin: 0; padding: 8px 10px; font-size: 13px; }
+    .btn-add-tag { padding: 8px 12px; background: none; border: 1.5px solid var(--arcilla); border-radius: 7px; color: var(--arcilla); font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Source Sans 3', sans-serif; white-space: nowrap; }
+
+    /* ── PROFILE ── */
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; cursor: pointer; border: 3px solid var(--arcilla); overflow: hidden; }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-section { background: var(--surface); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+    .profile-section h3 { font-family: 'Playfair Display', serif; color: var(--tierra); font-size: 1rem; margin-bottom: 14px; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-size: 14px; color: var(--text); }
+    .toggle { position: relative; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 24px; cursor: pointer; transition: background 0.3s; }
+    .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.3s; }
+    .toggle input:checked + .toggle-slider { background: var(--tierra); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+    .size-selector { display: flex; gap: 6px; }
+    .size-btn { flex: 1; padding: 7px 4px; border: 1.5px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--subtext); font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Source Sans 3', sans-serif; text-align: center; transition: all 0.2s; }
+    .size-btn.active { border-color: var(--tierra); background: #E8D5C4; color: var(--tierra); }
+    .export-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 8px; transition: all 0.2s; }
+    .export-btn:hover { border-color: var(--arcilla); color: var(--arcilla); }
+
+    /* ── RANKING ── */
+    .rank-card { background: var(--surface); border-radius: 10px; padding: 14px; margin-bottom: 10px; box-shadow: 0 1px 5px rgba(44,36,32,0.09); display: flex; justify-content: space-between; align-items: center; }
+    .rank-num { font-size: 10px; color: var(--subtext); margin-bottom: 2px; }
+
+    /* ── RESPONSIVE ── */
+    @media (min-width: 600px) {
+      .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      .photos-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+      .section { max-width: 700px; margin: 0 auto; }
+      header .header-inner { max-width: 700px; margin: 0 auto; }
+      nav { justify-content: center; }
+    }
+    @media (min-width: 900px) {
+      .section { max-width: 860px; }
+    }
   </style>
 </head>
 <body>
@@ -190,30 +250,28 @@
 <!-- Auth -->
 <div id="auth-screen" style="display:none">
   <div class="auth-logo"><img src="icon-512.png" class="app-icon" style="height:1.3em;width:1.3em"> Clay Recipes</div>
-  <div class="auth-sub">Registra tus fórmulas y cocciones</div>
+  <div class="auth-sub" id="auth-sub-text">Registra tus fórmulas y cocciones</div>
+  <div class="lang-selector-auth" id="lang-auth-btns"></div>
   <div class="auth-card">
     <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login', this)">Iniciar sesión</button>
-      <button class="auth-tab" onclick="switchAuthTab('register', this)">Registrarse</button>
+      <button class="auth-tab active" id="tab-login-btn" onclick="switchAuthTab('login', this)">Iniciar sesión</button>
+      <button class="auth-tab" id="tab-register-btn" onclick="switchAuthTab('register', this)">Registrarse</button>
     </div>
-
     <div id="login-form">
-      <label class="field-label">Email</label>
+      <label class="field-label" id="lbl-email-l">Email</label>
       <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="email">
-      <label class="field-label">Contraseña</label>
+      <label class="field-label" id="lbl-pass-l">Contraseña</label>
       <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
       <button class="btn-primary" id="btn-login" onclick="doLogin()">Entrar</button>
-      <button class="forgot-link" onclick="doResetPassword()">¿Olvidaste la contraseña?</button>
+      <button class="forgot-link" id="btn-forgot" onclick="doResetPassword()">¿Olvidaste la contraseña?</button>
     </div>
-
     <div id="register-form" style="display:none">
-      <label class="field-label">Email</label>
+      <label class="field-label" id="lbl-email-r">Email</label>
       <input type="email" id="reg-email" placeholder="tu@email.com" autocomplete="email">
-      <label class="field-label">Contraseña</label>
+      <label class="field-label" id="lbl-pass-r">Contraseña</label>
       <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
       <button class="btn-primary" id="btn-register" onclick="doRegister()">Crear cuenta</button>
     </div>
-
     <div id="auth-msg" class="auth-msg"></div>
   </div>
 </div>
@@ -225,116 +283,245 @@
       <div class="header-title"><img src="icon-512.png" class="app-icon"> Clay Recipes</div>
       <div class="header-right">
         <div class="sync-dot" id="sync-dot"></div>
-        <button class="btn-logout" onclick="doLogout()">Salir</button>
+        <select class="lang-select" id="lang-select-app" onchange="changeLang(this.value)"></select>
+        <button class="btn-icon" onclick="showTab('profile', document.querySelector('nav button:last-child'))">👤</button>
+        <button class="btn-icon" id="btn-logout" onclick="doLogout()">⏏</button>
       </div>
     </div>
   </header>
 
   <nav>
-    <button class="active" onclick="showTab('formulas', this)">Fórmulas</button>
-    <button onclick="showTab('cocciones', this)">Cocciones</button>
-    <button onclick="showTab('resultados', this)">Resultados</button>
+    <button class="active" onclick="showTab('formulas', this)" id="nav-formulas">Fórmulas</button>
+    <button onclick="showTab('cocciones', this)" id="nav-cocciones">Cocciones</button>
+    <button onclick="showTab('gallery', this)" id="nav-gallery">Galería</button>
+    <button onclick="showTab('resultados', this)" id="nav-resultados">Resultados</button>
+    <button onclick="showTab('profile', this)" id="nav-profile">Perfil</button>
   </nav>
 
+  <!-- Fórmulas -->
   <div id="tab-formulas" class="section active">
-    <div class="filter-row">
-      <button class="filter-btn active" onclick="filterFormulas('all', this)">Todas</button>
-      <button class="filter-btn" onclick="filterFormulas('engobe', this)">Engobes</button>
-      <button class="filter-btn" onclick="filterFormulas('esmalte', this)">Esmaltes</button>
+    <div class="search-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" id="search-input" placeholder="Buscar fórmulas..." oninput="renderFormulas()">
+      </div>
+    </div>
+    <div style="padding: 10px 0 0">
+      <div class="filter-row" id="filter-row">
+        <button class="filter-btn active" onclick="filterFormulas('all', this)" id="filter-all">Todas</button>
+        <button class="filter-btn" onclick="filterFormulas('engobe', this)" id="filter-engobe">Engobes</button>
+        <button class="filter-btn" onclick="filterFormulas('esmalte', this)" id="filter-esmalte">Esmaltes</button>
+      </div>
+      <div class="tags-filter" id="tags-filter-row"></div>
     </div>
     <div id="formulas-list"></div>
   </div>
 
+  <!-- Cocciones -->
   <div id="tab-cocciones" class="section">
     <div id="cocciones-list"></div>
   </div>
 
+  <!-- Galería global -->
+  <div id="tab-gallery" class="section">
+    <div class="gallery-grid" id="global-gallery"></div>
+  </div>
+
+  <!-- Resultados -->
   <div id="tab-resultados" class="section">
     <div id="resultados-list"></div>
   </div>
 
-  <button class="fab" onclick="openModal()">+</button>
+  <!-- Perfil -->
+  <div id="tab-profile" class="section">
+    <!-- Avatar -->
+    <div style="text-align:center;margin-bottom:16px">
+      <div class="profile-avatar" onclick="document.getElementById('avatar-input').click()">
+        <img id="avatar-img" src="" style="display:none">
+        <span id="avatar-placeholder">👤</span>
+      </div>
+      <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+      <div style="font-size:11px;color:var(--subtext);margin-top:4px" id="lbl-change-photo">Toca para cambiar foto</div>
+    </div>
+
+    <!-- Info -->
+    <div class="profile-section">
+      <h3 id="lbl-profile">Mi Perfil</h3>
+      <label class="field-label" id="lbl-display-name">Nombre</label>
+      <input type="text" id="profile-name" placeholder="Tu nombre">
+      <label class="field-label">Email</label>
+      <input type="email" id="profile-email" disabled style="opacity:0.6">
+      <button class="btn-primary" onclick="saveProfile()" id="btn-save-profile" style="margin-top:14px">Guardar perfil</button>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="profile-section">
+      <h3 id="lbl-change-password">Cambiar contraseña</h3>
+      <label class="field-label" id="lbl-new-password">Nueva contraseña</label>
+      <input type="password" id="new-password" placeholder="Mínimo 6 caracteres">
+      <button class="btn-primary" onclick="changePassword()" id="btn-change-pass" style="margin-top:14px">Cambiar contraseña</button>
+    </div>
+
+    <!-- Apariencia -->
+    <div class="profile-section">
+      <h3 id="lbl-appearance">Apariencia</h3>
+
+      <div class="toggle-row">
+        <span class="toggle-label" id="lbl-dark-mode">Modo oscuro</span>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-dark" onchange="applyDarkMode(this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="field-label" id="lbl-text-size">Tamaño de texto</div>
+        <div class="size-selector" style="margin-top:6px">
+          <button class="size-btn" onclick="setTextSize('small', this)" id="ts-small">Pequeño</button>
+          <button class="size-btn active" onclick="setTextSize('normal', this)" id="ts-normal">Normal</button>
+          <button class="size-btn" onclick="setTextSize('large', this)" id="ts-large">Grande</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="field-label" id="lbl-card-size">Tamaño de tarjetas</div>
+        <div class="size-selector" style="margin-top:6px">
+          <button class="size-btn" onclick="setCardSize('compact', this)" id="cs-compact">Compacto</button>
+          <button class="size-btn active" onclick="setCardSize('comfortable', this)" id="cs-comfortable">Cómodo</button>
+          <button class="size-btn" onclick="setCardSize('spacious', this)" id="cs-spacious">Espacioso</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exportar / Importar -->
+    <div class="profile-section">
+      <h3 id="lbl-export-import">Exportar / Importar</h3>
+      <button class="export-btn" onclick="exportToExcel()" id="btn-export">⬇️ Exportar a Excel</button>
+      <button class="export-btn" onclick="document.getElementById('import-input').click()" id="btn-import">⬆️ Importar Excel / CSV</button>
+      <input type="file" id="import-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="importFromFile(this)">
+      <div id="import-msg" style="font-size:12px;color:var(--verde);margin-top:6px;display:none"></div>
+    </div>
+
+    <!-- Eliminar cuenta -->
+    <div class="profile-section">
+      <button class="btn-danger" style="width:100%" onclick="deleteAccount()" id="btn-delete-account">Eliminar cuenta</button>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openModal()" id="fab-btn">+</button>
 </div>
 
-<!-- Modal -->
+<!-- Modal entrada -->
 <div class="modal-overlay" id="modal" onclick="handleModalClick(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title" id="modal-title">Nueva entrada</div>
 
-    <label class="field-label">Tipo de entrada</label>
+    <label class="field-label" id="lbl-entry-type">Tipo de entrada</label>
     <div class="type-selector">
-      <button class="type-btn" id="tbtn-engobe" onclick="selectType('engobe')">🎨 Engobe</button>
-      <button class="type-btn" id="tbtn-esmalte" onclick="selectType('esmalte')">✨ Esmalte</button>
-      <button class="type-btn" id="tbtn-coccion" onclick="selectType('coccion')">🔥 Cocción</button>
+      <button class="type-btn" id="tbtn-engobe" onclick="selectType('engobe')" id="btn-type-engobe">🎨 Engobe</button>
+      <button class="type-btn" id="tbtn-esmalte" onclick="selectType('esmalte')" id="btn-type-esmalte">✨ Esmalte</button>
+      <button class="type-btn" id="tbtn-coccion" onclick="selectType('coccion')" id="btn-type-coccion">🔥 Cocción</button>
     </div>
 
     <!-- Mezcla form -->
     <div id="form-mezcla" class="form-section">
-      <label class="field-label">Nombre / referencia</label>
+      <label class="field-label" id="lbl-f-name">Nombre / referencia</label>
       <input type="text" id="f-nombre" placeholder="Ej: Engobe azul cobalto #1">
-      <label class="field-label">Color resultante</label>
+      <label class="field-label" id="lbl-f-color">Color resultante</label>
       <input type="text" id="f-color" placeholder="Ej: Azul medio, mate">
-      <label class="field-label">Temperatura de uso (°C)</label>
+      <label class="field-label" id="lbl-f-temp">Temperatura de uso (°C)</label>
       <input type="number" id="f-temp" placeholder="1020">
-      <label class="field-label">Ingredientes</label>
+      <label class="field-label" id="lbl-f-ingredients">Ingredientes</label>
       <div class="ing-builder">
         <div style="display:flex;gap:7px;margin-bottom:5px">
-          <span style="flex:2;font-size:9px;font-weight:700;color:var(--gris);text-transform:uppercase">Material</span>
-          <span style="flex:1;font-size:9px;font-weight:700;color:var(--gris);text-transform:uppercase;text-align:center">%</span>
+          <span style="flex:2;font-size:9px;font-weight:700;color:var(--subtext);text-transform:uppercase" id="lbl-material">Material</span>
+          <span style="flex:1;font-size:9px;font-weight:700;color:var(--subtext);text-transform:uppercase;text-align:center">%</span>
           <span style="width:26px"></span>
         </div>
         <div id="ing-container"></div>
-        <button class="btn-add-ing" onclick="addIngredient()">+ Añadir ingrediente</button>
+        <button class="btn-add-ing" onclick="addIngredient()" id="btn-add-ingredient">+ Añadir ingrediente</button>
       </div>
-      <label class="field-label">Método de aplicación</label>
+
+      <!-- Calculadora inline -->
+      <div id="calc-section" style="display:none">
+        <label class="field-label" id="lbl-total-weight">Peso total a preparar (g)</label>
+        <input type="number" id="calc-weight" placeholder="500" oninput="renderCalc()">
+        <div class="calc-box" id="calc-results"></div>
+      </div>
+      <button class="btn-secondary" style="width:100%;margin-top:8px;text-align:center" onclick="toggleCalc()" id="btn-calculator">⚖️ Calculadora</button>
+
+      <label class="field-label" id="lbl-f-method">Método de aplicación</label>
       <select id="f-metodo">
-        <option value="">Seleccionar...</option>
-        <option>Inmersión</option><option>Pincel</option>
-        <option>Pistola</option><option>Vertido</option>
+        <option value="" id="opt-select">Seleccionar...</option>
+        <option id="opt-immersion">Inmersión</option>
+        <option id="opt-brush">Pincel</option>
+        <option id="opt-spray">Pistola</option>
+        <option id="opt-pour">Vertido</option>
       </select>
-      <label class="field-label">Notas</label>
+
+      <label class="field-label" id="lbl-f-tags">Etiquetas</label>
+      <div class="tags-row" id="form-tags-row"></div>
+      <div class="tag-input-row">
+        <input type="text" id="tag-input" placeholder="Nueva etiqueta..." onkeydown="if(event.key==='Enter'){addTag();event.preventDefault()}">
+        <button class="btn-add-tag" onclick="addTag()" id="btn-add-tag">+ Etiqueta</button>
+      </div>
+
+      <label class="field-label" id="lbl-f-notes">Notas</label>
       <textarea id="f-notas" placeholder="Observaciones, problemas encontrados, consejos..."></textarea>
     </div>
 
     <!-- Cocción form -->
     <div id="form-coccion" class="form-section">
-      <label class="field-label">Nombre / referencia</label>
+      <label class="field-label" id="lbl-c-name">Nombre / referencia</label>
       <input type="text" id="c-nombre" placeholder="Ej: Bizcochado estándar">
-      <label class="field-label">Tipo de cocción</label>
+      <label class="field-label" id="lbl-c-type">Tipo de cocción</label>
       <select id="c-tipo">
-        <option value="">Seleccionar...</option>
-        <option>Bizcochado</option><option>Esmaltado</option>
-        <option>Monococción</option><option>Tercer fuego</option>
+        <option value="" id="copt-select">Seleccionar...</option>
+        <option id="copt-bisque">Bizcochado</option>
+        <option id="copt-glaze">Esmaltado</option>
+        <option id="copt-single">Monococción</option>
+        <option id="copt-third">Tercer fuego</option>
       </select>
-      <label class="field-label">Temperatura máxima (°C)</label>
+      <label class="field-label" id="lbl-c-maxtemp">Temperatura máxima (°C)</label>
       <input type="number" id="c-tempmax" placeholder="1020">
-      <label class="field-label">Tiempo de mantenimiento (min)</label>
+      <label class="field-label" id="lbl-c-hold">Tiempo de mantenimiento (min)</label>
       <input type="number" id="c-mant" placeholder="15">
-      <label class="field-label">Curva de temperatura</label>
+      <label class="field-label" id="lbl-c-curve">Curva de temperatura</label>
       <div class="curva-builder">
         <div class="curva-header">
-          <span>Desde °C</span><span>Hasta °C</span><span>°C / hora</span>
+          <span id="lbl-from">Desde °C</span>
+          <span id="lbl-to">Hasta °C</span>
+          <span id="lbl-rate">°C / hora</span>
         </div>
         <div id="curva-container"></div>
-        <button class="btn-add-ing" style="border-color:var(--verde);color:var(--verde)" onclick="addCurvaStep()">+ Añadir tramo</button>
+        <button class="btn-add-ing" style="border-color:var(--verde);color:var(--verde)" onclick="addCurvaStep()" id="btn-add-step">+ Añadir tramo</button>
       </div>
-      <label class="field-label">Tipo de horno</label>
+      <label class="field-label" id="lbl-c-kiln">Tipo de horno</label>
       <select id="c-horno">
-        <option value="">Seleccionar...</option>
-        <option>Eléctrico</option><option>Gas</option>
-        <option>Leña</option><option>Raku</option>
+        <option value="" id="kopt-select">Seleccionar...</option>
+        <option id="kopt-electric">Eléctrico</option>
+        <option id="kopt-gas">Gas</option>
+        <option id="kopt-wood">Leña</option>
+        <option id="kopt-raku">Raku</option>
       </select>
-      <label class="field-label">Notas</label>
+      <label class="field-label" id="lbl-c-notes">Notas</label>
       <textarea id="c-notas" placeholder="Observaciones sobre la cocción..."></textarea>
     </div>
 
     <button class="btn-primary" onclick="saveEntry()" id="btn-save" style="display:none">Guardar</button>
-    <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+    <button class="btn-cancel" onclick="closeModal()" id="btn-cancel-modal">Cancelar</button>
   </div>
 </div>
 
-<!-- Firebase SDK -->
+<!-- Lightbox -->
+<div class="photo-lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="">
+  <button class="photo-lightbox-close" onclick="closeLightbox()">✕</button>
+</div>
+
+<!-- SheetJS for Excel export/import -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
