@@ -287,7 +287,7 @@ window.applyDarkMode = (on, save = true) => {
 };
 
 window.setTextSize = (size, btn, save = true) => {
-  const scales = { small: 0.88, normal: 1, large: 1.18 };
+  const scales = { small: 0.85, normal: 1, large: 1.35 };
   document.documentElement.style.setProperty("--font-scale", scales[size] || 1);
   prefs.textSize = size;
   document.querySelectorAll("[id^='ts-']").forEach(b => b.classList.remove("active"));
@@ -297,7 +297,7 @@ window.setTextSize = (size, btn, save = true) => {
 };
 
 window.setCardSize = (size, btn, save = true) => {
-  const pads = { compact: "10px", comfortable: "14px", spacious: "20px" };
+  const pads = { compact: "10px", comfortable: "16px", spacious: "26px" };
   document.documentElement.style.setProperty("--card-pad", pads[size] || "14px");
   prefs.cardSize = size;
   document.querySelectorAll("[id^='cs-']").forEach(b => b.classList.remove("active"));
